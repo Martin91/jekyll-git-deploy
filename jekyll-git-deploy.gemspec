@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.description = "Executable commands to help you to deploy your jekyll blog through git push way conveniently!"
   s.authors     = ["Martin Hong"]
   s.email       = 'hongzeqin@gmail.com'
-  s.files       = ["lib/jekyll_git_deploy.rb"]
-  s.homepage    =
-    'http://rubygems.org/gems/hola'
-  s.license       = 'MIT'
+  s.files       = `git ls-files`.split("\n")
+  s.homepage    = "https://github.com/Martin91/jekyll-git-deploy"
+  s.executables << ['jekyll-git-deploy']
+  s.license     = 'MIT'
 end

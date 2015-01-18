@@ -1,0 +1,8 @@
+#!/usr/bin/env
+
+require 'jekyll_git_deploy'
+include JekyllGitDeploy
+
+if ARGV.length < 2
+  raise "Usage: jekyll-git-deploy [init | deploy]".red
+end
