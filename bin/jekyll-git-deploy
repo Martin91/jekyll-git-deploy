@@ -3,6 +3,17 @@
 require 'jekyll_git_deploy'
 include JekyllGitDeploy
 
-if ARGV.length < 2
-  raise "Usage: jekyll-git-deploy [init | deploy]".red
+def print_usage
+  puts "Usage: jekyll-git-deploy [#{AVAILABLE_SUB_COMMANDS.join(' | ')}]".yellow
+end
+
+AVAILABLE_SUB_COMMANDS = %w(init deploy)
+if ARGV.length < 1
+  puts "Please specify a sub command:"
+  print_usage
+elsif !AVAILABLE_SUB_COMMANDS.include? ARGV.first
+  puts "Unpermitted command \"#{ARGV.first}\", you can only use #{AVAILABLE_SUB_COMMANDS.join(' or ')}".red
+  print_usage
+else
+  send ARGV.first
 end
