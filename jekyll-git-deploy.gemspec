@@ -8,6 +8,6 @@ Gem::Specification.new do |s|
   s.email       = 'hongzeqin@gmail.com'
   s.files       = `git ls-files`.split("\n")
   s.homepage    = "https://github.com/Martin91/jekyll-git-deploy"
-  s.executables << ['jekyll-git-deploy']
+  s.executables = ['jekyll-git-deploy']
   s.license     = 'MIT'
 end
