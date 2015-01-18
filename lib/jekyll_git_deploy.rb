@@ -47,9 +47,11 @@ module JekyllGitDeploy
     puts "\nGenerating the newest site".yellow
     `jekyll build`
 
-    # This step is only for coding.net
-    puts "\nTouching Staticfile".yellow
-    `touch #{destination}/Staticfile`
+    # This step is only for sites requiring some special file to detect running environment
+    unless destination.empty?
+      puts "\nTouching Staticfile".yellow
+      `touch #{destination}/Staticfile`
+    end
 
     puts "\nruning `cd #{destination}`".yellow
     Dir.chdir destination do
