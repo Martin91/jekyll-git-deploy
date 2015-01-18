@@ -8,6 +8,8 @@ module CommonTasks
     "touch_file" => "Staticfile"
   }
 
+  REQUIRED_CONFIGS = %w(destination deploy_repo deploy_branch deploy_remote_name touch_file )
+
   def read_configs
     return @configs if @configs
 
@@ -18,27 +20,21 @@ module CommonTasks
     @configs = CONFIG_DEFAULTS.merge YAML.load_file("./#{CONFIG_FILE}")
   end
 
-  def method_missing(method, *args, &block)
-    if read_configs.keys.include? (method.to_s)
-      # Define the method firstly
-      define_method method do
-        read_configs[method.to_s]
-      end
-
-      # Then call new defined method
-      send method
-    else
-      super
-    end
-  end
-
   def commit_newest_site
     message = "Genereted site at #{Time.now}"
     puts "\ncommit the site: #{message}".yellow
-    `git add . && git commit -m "#{message}"`
+    `git add -A . && git commit -m "#{message}"`
   end
 
   def current_branch
     `git rev-parse --abbrev-ref HEAD`.strip
+  end
+
+  def self.included(base)
+    REQUIRED_CONFIGS.each do |method|
+      define_method method do
+        read_configs[method]
+      end
+    end
   end
 end

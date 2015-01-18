@@ -75,6 +75,7 @@ module JekyllGitDeploy
       `git push -u #{deploy_remote_name} #{deploy_branch}`
 
       puts "\nThe deploy is finished!".green
+      baseurl = read_configs['baseurl'] || ""
       `open "#{baseurl}"` if baseurl =~ /https?:\/\/\S+/
     end
   end
