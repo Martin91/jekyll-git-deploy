@@ -15,7 +15,7 @@ module JekyllGitDeploy
       raise "You haven't specify any deploy repo in _config.yml file, the action can not continue!".red
     end
 
-    file = File.open('.gitignore', 'r+')
+    file = File.open('.gitignore', 'a+')
     existed_line = file.readlines.select{|line| line.strip == destination}
     unless existed_line
       puts "\nadd #{destination} directory to .gitignore".yellow
@@ -74,7 +74,18 @@ module JekyllGitDeploy
       end
 
       puts "\nPushing newest generated site:".yellow
-      `git push -u #{deploy_remote_name} #{deploy_branch}`
+      push_result = `git push -u #{deploy_remote_name} #{deploy_branch} 2>&1`
+      if push_result.include?("Updates were rejected because the remote contains work")
+        print "Oops! It seems there are some updates exist in the remote repo so that your pushing has been rejected, do you want to force to update?[Y/N]".red
+        if STDIN.gets.chomp.to_s.downcase == 'y'
+          puts "Try to force to update remote repo...".yellow
+          `git push -f #{deploy_remote_name} #{deploy_branch}`
+        else
+          puts "You have canceled the deploy process, you need to manually merge remote updates before deploy!".yellow
+          exit
+        end
+      end
+
 
       puts "\nThe deploy is finished!".green
       baseurl = read_configs['baseurl'] || ""
