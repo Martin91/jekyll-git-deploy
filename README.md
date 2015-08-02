@@ -10,7 +10,7 @@ Executable commands to help you to deploy your [jekyll](http://jekyllrb.com/) bl
   ```
   or, install it through the Gemfile:
   ```ruby
-  gem 'jekyll-git-deploy', '~> 0.0.1'
+  gem 'jekyll-git-deploy', '~> 0.0.2'
 ```
 
 2. Config Additional Keys In Your `_config.yml` file:
