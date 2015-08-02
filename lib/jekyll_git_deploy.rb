@@ -37,6 +37,9 @@ module JekyllGitDeploy
       puts "\nCurrent git remotes:\n==========================".yellow
       puts `git remote -v`
 
+      puts "Fetch remote codes...".yellow
+      `git pull #{deploy_remote_name} #{deploy_branch}`
+
       puts "\nFinished deploy initialization for the current site".green
     end
   end
@@ -44,6 +47,16 @@ module JekyllGitDeploy
   # Build and push(deploy) the newest generated site
   #
   def deploy
+    # Pull the newest deploy data
+    Dir.chdir destination do
+      unless `git branch`.empty?
+        checkout_target_branch
+
+        puts "Updating remote deployed versions...".green
+        `git pull #{deploy_remote_name} #{deploy_branch}`
+      end
+    end
+
     puts "\nGenerating the newest site".yellow
     `jekyll build`
 
@@ -54,6 +67,7 @@ module JekyllGitDeploy
     end
 
     puts "\nruning `cd #{destination}`".yellow
+
     Dir.chdir destination do
       if `git branch`.empty?  # Fully new git repo
         commit_newest_site
@@ -61,15 +75,7 @@ module JekyllGitDeploy
         puts "\nThis is a new git repo, creating new branch #{deploy_branch} now".yellow
         `git checkout -b #{deploy_branch} &> /dev/null && git merge #{current_branch}`
       else
-        unless current_branch == deploy_branch
-          puts "\nStart to checkout to deploy branch: #{deploy_branch}".yellow
-          if `git show-branch #{deploy_branch} 2> /dev/null`.empty?  # the deploy branch didn't exist
-            `git checkout -b #{deploy_branch}`
-          else
-            `git checkout #{deploy_branch}`
-          end
-        end
-
+        checkout_target_branch
         commit_newest_site
       end
 
@@ -84,8 +90,9 @@ module JekyllGitDeploy
           puts "You have canceled the deploy process, you need to manually merge remote updates before deploy!".yellow
           exit
         end
+      else
+        puts push_result
       end
-
 
       puts "\nThe deploy is finished!".green
       baseurl = read_configs['baseurl'] || ""
