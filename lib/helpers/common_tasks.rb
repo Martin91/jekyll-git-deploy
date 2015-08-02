@@ -30,6 +30,17 @@ module CommonTasks
     `git rev-parse --abbrev-ref HEAD`.strip
   end
 
+  def checkout_target_branch(quiet = false)
+    unless current_branch == deploy_branch
+      puts "\nStart to checkout to deploy branch: #{deploy_branch}".yellow unless quiet
+      if `git show-branch #{deploy_branch} 2> /dev/null`.empty?  # the deploy branch didn't exist
+        `git checkout -b #{deploy_branch}`
+      else
+        `git checkout #{deploy_branch}`
+      end
+    end
+  end
+
   def self.included(base)
     REQUIRED_CONFIGS.each do |method|
       define_method method do
